@@ -50,30 +50,33 @@ impl Runner for AocDay01 {
     fn part2(&mut self) -> Vec<String> {
         let mut calibration_value = 0;
         let numbers = ["one", "1", "two", "2", "three", "3", "four", "4", "five", "5", "six", "6", "seven", "7", "eight", "8", "nine", "9"];
-        // TODO: le contenu de la boucle peut-être rendu plus rapide garce à
-        // l'algo Aho–Corasick (enfin je suppose comme ma solution est "naïve")
-        for line in self.lines.iter() {
-            // trouve le premier chiffre dans le line
-            let first_digit_pos = numbers.iter()
-                .enumerate()
-                .filter_map(|(i, number)| line
-                    .find(number)
-                    .map(|str_i| (i, str_i))
-                )
-                .min_by_key(|x| x.1);
 
-            // trouve le dernier chiffre dans le line
-            let last_digit_pos = numbers.iter()
+        // NOTE: cette version de la boucle peut très certainement être améliorée, mais 
+        // fait une boucle et non plus 2 pour trouver le maximum et le minimum
+        // elle peut potentiellement être rendue plus rapide avec l'algo Aho-Corasick
+        for line in self.lines.iter() {
+            // trouve l'ensemble des chiffres dans le line
+            let mut iterator = numbers.iter()
                 .enumerate()
-                .filter_map(|(i, number)| line
-                    .rfind(number)
-                    .map(|str_i| (i, str_i))
-                )
-                .max_by_key(|x| x.1);
+                .flat_map(|(i, number)| line
+                    .match_indices(number)
+                    .map(move |(str_i, _)| (i, str_i))
+                );
+
+            let mut first_digit_pos: (usize, usize) = iterator.next().unwrap();
+            let mut last_digit_pos: (usize, usize) = first_digit_pos.clone();
+
+            for pos in iterator {
+                if pos.1 < first_digit_pos.1 {
+                    first_digit_pos = pos;
+                } else if pos.1 > last_digit_pos.1 {
+                    last_digit_pos = pos;
+                }
+            }
 
             // transforme la position dans le tableau en ca valeur, le calcul est équivalent à $index / 2 + 1$ 
-            let first_digit = (first_digit_pos.unwrap().0 >> 1) + 1;
-            let last_digit = (last_digit_pos.unwrap().0 >> 1) + 1;
+            let first_digit = (first_digit_pos.0 >> 1) + 1;
+            let last_digit = (last_digit_pos.0 >> 1) + 1;
 
             calibration_value += first_digit * 10 + last_digit;
         }
