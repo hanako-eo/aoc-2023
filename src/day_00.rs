@@ -49,7 +49,7 @@ impl Runner for AocDay00 {
             vec![".........".to_string(),
                  ".........".to_string(),
                  "...C.s...".to_string()],
-        ]
+        ];
     }
 
     fn part1(&mut self) -> Vec<String> {
