@@ -5,7 +5,7 @@ use aoclib::Runner;
 
 #[derive(Default)]
 pub struct AocDay01 {
-    pub(crate) calibrations_values: Vec<u32>,
+    lines: Vec<String>,
 }
 
 impl AocDay01 {
@@ -19,10 +19,16 @@ impl Runner for AocDay01 {
 
     // fonction pour parser le contenu d'un fichier pour un jour précis
     fn parse(&mut self) {
-        let file = File::open("./input/day-01.txt").expect("Pour avancer, il faudrait mettre le fichier dayy-01");
+        let file = File::open("./input/day-01.txt")
+            .expect("Pour avancer, il faut le fichier day-01.txt");
         let buffer = BufReader::new(file);
 
-        for line in buffer.lines().map(|l| l.unwrap()) {
+        self.lines = buffer.lines().map(|l| l.unwrap()).collect();
+    }
+
+    fn part1(&mut self) -> Vec<String> {
+        let mut calibration_value = 0;
+        for line in self.lines.iter() {
             let mut first_digit: Option<u32> = None;
             let mut last_digit: Option<u32> = None;
 
@@ -35,18 +41,44 @@ impl Runner for AocDay01 {
                 }
             }
 
-            let first_digit = first_digit.unwrap();
-            let last_digit = last_digit.unwrap();
-            self.calibrations_values.push(first_digit * 10 + last_digit)
+            calibration_value += first_digit.unwrap() * 10 + last_digit.unwrap();
         }
-    }
 
-    fn part1(&mut self) -> Vec<String> {
-        aoclib::output(self.calibrations_values.iter().sum::<u32>())
+        aoclib::output(calibration_value)
     }
 
     fn part2(&mut self) -> Vec<String> {
-        aoclib::output("")
+        let mut calibration_value = 0;
+        let numbers = ["one", "1", "two", "2", "three", "3", "four", "4", "five", "5", "six", "6", "seven", "7", "eight", "8", "nine", "9"];
+        // TODO: le contenu de la boucle peut-être rendu plus rapide garce à
+        // l'algo Aho–Corasick (enfin je suppose comme ma solution est "naïve")
+        for line in self.lines.iter() {
+            // trouve le premier chiffre dans le line
+            let first_digit_pos = numbers.iter()
+                .enumerate()
+                .filter_map(|(i, number)| line
+                    .find(number)
+                    .map(|str_i| (i, str_i))
+                )
+                .min_by_key(|x| x.1);
+
+            // trouve le dernier chiffre dans le line
+            let last_digit_pos = numbers.iter()
+                .enumerate()
+                .filter_map(|(i, number)| line
+                    .rfind(number)
+                    .map(|str_i| (i, str_i))
+                )
+                .max_by_key(|x| x.1);
+
+            // transforme la position dans le tableau en ca valeur, le calcul est équivalent à $index / 2 + 1$ 
+            let first_digit = (first_digit_pos.unwrap().0 >> 1) + 1;
+            let last_digit = (last_digit_pos.unwrap().0 >> 1) + 1;
+
+            calibration_value += first_digit * 10 + last_digit;
+        }
+
+        aoclib::output(calibration_value)
     }
 }
 
@@ -55,7 +87,18 @@ fn day_01_file_reading() {
     let mut day = AocDay01::default();
     day.parse();
 
-    assert_eq!(day.calibrations_values.get(0..10).unwrap(), vec![88, 23, 33, 45, 22, 53, 55, 82, 14, 69]);
+    assert_eq!(day.lines.get(0..10).unwrap(), vec![
+        "five8b".to_string(),
+        "2733vmmpknvgr".to_string(),
+        "3oneeighttwo".to_string(),
+        "twofourfive485".to_string(),
+        "2fourghsixptk".to_string(),
+        "5fivezgfgcxbf3five".to_string(),
+        "eighthtkk5".to_string(),
+        "qjqpnfs812sevensbjlkzrzczdmsr".to_string(),
+        "cpxtthree14".to_string(),
+        "pljnzhchrrqvkncfnfive6four7dzqkfslm9".to_string(),
+    ]);
 }
 
 #[test]
@@ -71,7 +114,12 @@ fn day_01_part1() {
     */
 
     let mut day = AocDay01 {
-        calibrations_values: vec![12, 38, 15, 77]
+        lines: vec![
+            "1abc2".to_string(),
+            "pqr3stu8vwx".to_string(),
+            "a1b2c3d4e5f".to_string(),
+            "treb7uchet".to_string(),
+        ]
     };
 
     assert_eq!(day.part1(), vec!["142".to_string()]);
@@ -79,32 +127,19 @@ fn day_01_part1() {
 
 #[test]
 fn day_01_part2() {
-    // let mut day = AocDay01 {
-    //     lines: Default::default(),
-    //     matrixs: vec![
-    //         vec!["..C...s..".to_string()],
-    //         vec!["..C......".to_string(),
-    //              "....s....".to_string()],
-    //         vec!["........C".to_string(),
-    //              ".........".to_string(),
-    //              ".........".to_string()],
-    //         vec![".C.......".to_string(),
-    //              ".........".to_string(),
-    //              "......s..".to_string()],
-    //         vec!["........C".to_string(),
-    //              "s........".to_string(),
-    //              ".........".to_string()],
-    //         vec![".........".to_string(),
-    //              "...s.....".to_string(),
-    //              ".........".to_string()],
-    //         vec!["........C".to_string(),
-    //              "........s".to_string(),
-    //              ".........".to_string()],
-    //         vec![".........".to_string(),
-    //              ".........".to_string(),
-    //              "...C.s...".to_string()],
-    //     ],
-    // };
+    let mut day = AocDay01 {
+        lines: vec![
+            "two1nine".to_string(),
+            "eightwothree".to_string(),
+            "abcone2threexyz".to_string(),
+            "xtwone3four".to_string(),
+            "4nineeightseven2".to_string(),
+            "zoneight234".to_string(),
+            "7pqrstsixteen".to_string(),
+            "twone".to_string(),
+            "one1twoninehm".to_string(),
+        ]
+    };
 
-    // assert_eq!(day.part2(), vec!["43079012".to_string()]);
+    assert_eq!(day.part2(), vec!["321".to_string()]);
 }
