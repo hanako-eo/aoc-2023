@@ -10,25 +10,34 @@ struct Round {
     red: u32,
 }
 
+impl Round {
+    fn pow(self) -> u32 {
+        self.red * self.blue * self.green
+    }
+
+    fn max(self, other: &Self) -> Self {
+        Self {
+            green: self.green.max(other.green),
+            blue: self.blue.max(other.blue),
+            red: self.red.max(other.red)
+        }
+    }
+}
+
+
 #[derive(Default)]
 pub struct AocDay02 {
-    reference_bag: Round,
     games: Vec<Vec<Round>>,
 }
 
 impl AocDay02 {
     pub fn new() -> Self {
-        Self {
-            reference_bag: Round { green: 13, blue: 14, red: 12 },
-            ..Default::default()
-        }
+        Self::default()
     }
 }
 
 impl Runner for AocDay02 {
-    fn day(&self) -> usize {
-        2
-    }
+    fn day(&self) -> usize { 2 }
 
     // fonction pour parser le contenu d'un fichier pour un jour précis
     fn parse(&mut self) {
@@ -65,12 +74,14 @@ impl Runner for AocDay02 {
     }
 
     fn part1(&mut self) -> Vec<String> {
+        let reference_bag = Round { green: 13, blue: 14, red: 12 };
+
         let mut valid_games_sum = 0;
         'outer: for (i, game) in self.games.iter().enumerate() {
             for round in game {
-                if round.blue > self.reference_bag.blue
-                    || round.green > self.reference_bag.green
-                    || round.red > self.reference_bag.red
+                if round.blue > reference_bag.blue
+                    || round.green > reference_bag.green
+                    || round.red > reference_bag.red
                 {
                     continue 'outer;
                 }
@@ -82,7 +93,16 @@ impl Runner for AocDay02 {
     }
 
     fn part2(&mut self) -> Vec<String> {
-        aoclib::output("")
+        let mut minimal_pow_bag_sum = 0;
+        for game in self.games.iter() {
+            let mut minimal_bag = Round::default();
+            for round in game {
+                minimal_bag = minimal_bag.max(round);
+            }
+            minimal_pow_bag_sum += minimal_bag.pow();
+        }
+
+        aoclib::output(minimal_pow_bag_sum)
     }
 }
 
@@ -126,11 +146,6 @@ fn day_02_part1() {
     */
 
     let mut day = AocDay02 {
-        reference_bag: Round {
-            green: 13,
-            blue: 14,
-            red: 12,
-        },
         games: vec![
             vec![
                 Round { blue: 3, red: 4, green: 0, },
@@ -164,4 +179,34 @@ fn day_02_part1() {
 
 #[test]
 fn day_02_part2() {
+    let mut day = AocDay02 {
+        games: vec![
+            vec![
+                Round { blue: 3, red: 4, green: 0, },
+                Round { blue: 6, red: 1, green: 2, },
+                Round { blue: 0, red: 0, green: 2, },
+            ],
+            vec![
+                Round { blue: 1, red: 0, green: 2, },
+                Round { blue: 4, red: 1, green: 3, },
+                Round { blue: 1, red: 0, green: 1, },
+            ],
+            vec![
+                Round { blue: 6, red: 20, green: 8, },
+                Round { blue: 5, red: 4, green: 13, },
+                Round { blue: 0, red: 1, green: 5, },
+            ],
+            vec![
+                Round { blue: 6, red: 3, green: 1, },
+                Round { blue: 0, red: 6, green: 3, },
+                Round { blue: 15, red: 14, green: 3, },
+            ],
+            vec![
+                Round { blue: 1, red: 6, green: 3, },
+                Round { blue: 2, red: 1, green: 2, },
+            ],
+        ],
+    };
+
+    assert_eq!(day.part2(), vec!["2286".to_string()]);
 }
