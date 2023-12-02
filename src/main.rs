@@ -25,17 +25,17 @@ fn run_2022(which: Selector) {
     match which {
         Selector::Last => {
             let last = days.len() - 1;
-            let d = &mut days[last];
-            aoclib::run_solution(*d);
+            aoclib::run_solution(days[last], last);
         }
         Selector::All => {
+            let mut day_index = 0;
             for d in days {
-                aoclib::run_solution(d);
+                aoclib::run_solution(d, day_index);
+                day_index += 1;
             }
         }
         Selector::One(num) => {
-            let d = &mut days[num - 1];
-            aoclib::run_solution(*d);
+            aoclib::run_solution(days[num], num);
         }
     }
 }

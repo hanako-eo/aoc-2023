@@ -15,8 +15,6 @@ impl AocDay01 {
 }
 
 impl Runner for AocDay01 {
-    fn day(&self) -> usize { 1 }
-
     // fonction pour parser le contenu d'un fichier pour un jour précis
     fn parse(&mut self) {
         let file = File::open("./input/day-01.txt")

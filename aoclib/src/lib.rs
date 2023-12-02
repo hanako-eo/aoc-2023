@@ -12,14 +12,13 @@ pub enum Selector {
 }
 
 pub trait Runner {
-    fn day(&self) -> usize;
     fn parse(&mut self);
     fn part1(&mut self) -> Vec<String>;
     fn part2(&mut self) -> Vec<String>;
 }
 
-pub fn run_solution<T: Runner + ?Sized>(solution: &mut T) {
-    println!("---- AoC 2023, Day {} ----", solution.day());
+pub fn run_solution<T: Runner + ?Sized>(solution: &mut T, day: usize) {
+    println!("---- AoC 2023, Day {} ----", day);
 
     let start = Instant::now();
     solution.parse();

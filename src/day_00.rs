@@ -13,8 +13,6 @@ impl AocDay00 {
 }
 
 impl Runner for AocDay00 {
-    fn day(&self) -> usize { 0 }
-
     // fonction pour parser le contenu d'un fichier pour un jour précis
     fn parse(&mut self) {
         self.lines = vec![

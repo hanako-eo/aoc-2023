@@ -37,8 +37,6 @@ impl AocDay02 {
 }
 
 impl Runner for AocDay02 {
-    fn day(&self) -> usize { 2 }
-
     // fonction pour parser le contenu d'un fichier pour un jour précis
     fn parse(&mut self) {
         let file =
