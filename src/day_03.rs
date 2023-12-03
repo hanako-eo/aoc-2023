@@ -49,7 +49,7 @@ impl AocDay03 {
                             value: number_token.parse::<u32>().unwrap(),
                             used: false
                         });
-                        self.numbers.insert((x, y), number);
+                        self.numbers.insert((x, y), number.clone());
                         self.numbers.insert((x + number_token.len() - 1, y), number);
                         continue;
                     }
