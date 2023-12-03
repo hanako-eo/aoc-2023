@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use std::rc::Rc;
 
 use aoclib::Runner;
 use aoclib::boxmut::BoxMut;
@@ -16,7 +15,7 @@ struct Number {
 struct Piece {
     symbol: char,
     position: Position,
-    number: u32,
+    numbers: Vec<u32>,
 }
 
 #[derive(Default)]
@@ -54,7 +53,7 @@ impl AocDay03 {
                         self.numbers.insert((x + number_token.len() - 1, y), number);
                         continue;
                     }
-                    symbol => self.pieces.push(Piece { symbol, position: (x, y), number: 0 })
+                    symbol => self.pieces.push(Piece { symbol, position: (x, y), numbers: Vec::new() })
                 }
                 current_char = chars_buffer.next();
             }
@@ -67,7 +66,7 @@ impl AocDay03 {
                     if let Some(number) = self.numbers.get_mut(&((x as isize).saturating_add(delta_x) as usize, (y as isize).saturating_add(delta_y) as usize)) {
                         let number = number.get_mut();
                         if !number.used {
-                            piece.number += number.value;
+                            piece.numbers.push(number.value);
                             number.used = true;
                         }
                     }
@@ -88,40 +87,15 @@ impl Runner for AocDay03 {
     }
 
     fn part1(&mut self) -> Vec<String> {
-        aoclib::output(self.pieces.iter().map(|p| p.number).sum::<u32>())
+        aoclib::output(self.pieces.iter().map(|p| p.numbers.iter().sum::<u32>()).sum::<u32>())
     }
 
     fn part2(&mut self) -> Vec<String> {
-        aoclib::output("")
+        aoclib::output(self.pieces.iter().filter_map(|p| match p.symbol {
+            '*' if p.numbers.len() > 1 => Some(&p.numbers),
+            _ => None
+        }).map(|numbers| numbers.iter().product::<u32>()).sum::<u32>())
     }
-}
-
-#[test]
-fn day_03_file_reading() {
-    // let mut day = AocDay03::default();
-    // day.parse();
-
-    // assert_eq!(day.games.get(0..3).unwrap(), vec![
-    //         vec![
-    //             Round { green: 1, blue: 7, red: 9 },
-    //             Round { green: 8, blue: 0, red: 0 },
-    //             Round { green: 10, blue: 5, red: 3 },
-    //             Round { green: 1, blue: 11, red: 5  }
-    //         ],
-    //         vec![
-    //             Round { green: 7, blue: 3, red: 0 },
-    //             Round { green: 4, blue: 20, red: 0 },
-    //             Round { green: 2, blue: 13, red: 6  }
-    //         ],
-    //         vec![
-    //             Round { green: 1, blue: 11, red: 3 },
-    //             Round { green: 3, blue: 9, red: 15 },
-    //             Round { green: 4, blue: 11, red: 4 },
-    //             Round { green: 2, blue: 14, red: 1 },
-    //             Round { green: 4, blue: 18, red: 10  }
-    //         ]
-    //     ]
-    // );
 }
 
 #[test]
@@ -138,4 +112,12 @@ fn day_03_part1() {
 
 #[test]
 fn day_03_part2() {
+    let mut day = AocDay03::new();
+    
+    let file = File::open("./input/day-03-test.txt").expect("Pour avancer, il faut le fichier day-03.txt");
+    let buffer = BufReader::new(file);
+    
+    day.parse_schema(buffer);
+    
+    assert_eq!(day.part2(), vec!["467835".to_string()]);
 }
