@@ -1,5 +1,9 @@
+#![feature(allocator_api)]
+
 use std::time::{Instant, Duration};
 use std::fmt::Display;
+
+pub mod boxmut;
 
 pub fn hello() {
     println!("Hello in AOClib !");
