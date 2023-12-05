@@ -28,8 +28,13 @@ impl AocDay03 {
     pub fn new() -> Self {
         Self::default()
     }
+}
 
-    fn parse_schema(&mut self, buffer: BufReader<File>) {
+impl Runner for AocDay03 {
+    // fonction pour parser le contenu d'un fichier pour un jour précis
+    fn parse(&mut self, file: File) {
+        let buffer = BufReader::new(file);
+
         for (y, line) in buffer.lines().map(|l| l.unwrap()).enumerate() {
             let mut chars_buffer = line.char_indices();
             let mut current_char = chars_buffer.next();
@@ -74,17 +79,6 @@ impl AocDay03 {
             }
         }
     }
-}
-
-impl Runner for AocDay03 {
-    // fonction pour parser le contenu d'un fichier pour un jour précis
-    fn parse(&mut self, file: File) {
-        let file =
-            File::open("./input/day-03.txt").expect("Pour avancer, il faut le fichier day-03.txt");
-        let buffer = BufReader::new(file);
-
-        self.parse_schema(buffer);
-    }
 
     fn part1(&mut self) -> Vec<String> {
         aoclib::output(self.pieces.iter().map(|p| p.numbers.iter().sum::<u32>()).sum::<u32>())
@@ -103,9 +97,8 @@ fn day_03_part1() {
     let mut day = AocDay03::new();
     
     let file = File::open("./input/day-03-test.txt").expect("Pour avancer, il faut le fichier day-03.txt");
-    let buffer = BufReader::new(file);
 
-    day.parse_schema(buffer);
+    day.parse(file);
 
     assert_eq!(day.part1(), vec!["4361".to_string()]);
 }
@@ -115,9 +108,8 @@ fn day_03_part2() {
     let mut day = AocDay03::new();
     
     let file = File::open("./input/day-03-test.txt").expect("Pour avancer, il faut le fichier day-03.txt");
-    let buffer = BufReader::new(file);
     
-    day.parse_schema(buffer);
+    day.parse(file);
     
     assert_eq!(day.part2(), vec!["467835".to_string()]);
 }

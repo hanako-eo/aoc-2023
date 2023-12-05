@@ -12,6 +12,9 @@ use day_02::AocDay02;
 mod day_03;
 use day_03::AocDay03;
 
+mod day_04;
+use day_04::AocDay04;
+
 fn main() {
     run_2022(Selector::All);
 }
@@ -21,9 +24,11 @@ fn run_2022(which: Selector) {
     let mut day01 = AocDay01::new();
     let mut day02 = AocDay02::new();
     let mut day03 = AocDay03::new();
+    let mut day04 = AocDay04::new();
 
     let mut days: Vec<&mut dyn Runner> = vec![
         &mut day00, &mut day01, &mut day02, &mut day03,
+        &mut day04,
     ];
 
     match which {
