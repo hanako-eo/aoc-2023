@@ -78,7 +78,7 @@ impl AocDay03 {
 
 impl Runner for AocDay03 {
     // fonction pour parser le contenu d'un fichier pour un jour précis
-    fn parse(&mut self) {
+    fn parse(&mut self, file: File) {
         let file =
             File::open("./input/day-03.txt").expect("Pour avancer, il faut le fichier day-03.txt");
         let buffer = BufReader::new(file);

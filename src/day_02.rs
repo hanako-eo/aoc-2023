@@ -38,9 +38,7 @@ impl AocDay02 {
 
 impl Runner for AocDay02 {
     // fonction pour parser le contenu d'un fichier pour un jour précis
-    fn parse(&mut self) {
-        let file =
-            File::open("./input/day-02.txt").expect("Pour avancer, il faut le fichier day-02.txt");
+    fn parse(&mut self, file: File) {
         let buffer = BufReader::new(file);
 
         self.games = buffer
@@ -106,8 +104,13 @@ impl Runner for AocDay02 {
 
 #[test]
 fn day_02_file_reading() {
+    let file = match File::open(format!("./input/day-02.txt")) {
+        Ok(f) => f,
+        Err(_) => panic!("Pour avancer, il faut le fichier day-02.txt")
+    };
+
     let mut day = AocDay02::default();
-    day.parse();
+    day.parse(file);
 
     assert_eq!(day.games.get(0..3).unwrap(), vec![
             vec![

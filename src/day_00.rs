@@ -1,3 +1,5 @@
+use std::fs::File;
+
 use aoclib::Runner;
 
 #[derive(Default)]
@@ -14,7 +16,7 @@ impl AocDay00 {
 
 impl Runner for AocDay00 {
     // fonction pour parser le contenu d'un fichier pour un jour précis
-    fn parse(&mut self) {
+    fn parse(&mut self, _: File) {
         self.lines = vec![
             "C.....s".to_string(),
             "C...s".to_string(),

@@ -1,5 +1,6 @@
 #![feature(allocator_api)]
 
+use std::fs::File;
 use std::time::{Instant, Duration};
 use std::fmt::Display;
 
@@ -16,7 +17,7 @@ pub enum Selector {
 }
 
 pub trait Runner {
-    fn parse(&mut self);
+    fn parse(&mut self, file: File);
     fn part1(&mut self) -> Vec<String>;
     fn part2(&mut self) -> Vec<String>;
 }
@@ -24,8 +25,13 @@ pub trait Runner {
 pub fn run_solution<T: Runner + ?Sized>(solution: &mut T, day: usize) {
     println!("---- AoC 2023, Day {} ----", day);
 
+    let file = match File::open(format!("./input/day-{day:0>2}.txt")) {
+        Ok(f) => f,
+        Err(_) => panic!("Pour avancer, il faut le fichier day-{day:0>2}.txt")
+    };
+
     let start = Instant::now();
-    solution.parse();
+    solution.parse(file);
     let parse_time = start.elapsed().as_millis();
     println!("{:3}.{:03} Parsing", parse_time / 1000, parse_time % 1000);
 
